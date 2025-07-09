@@ -13,7 +13,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Конфигурационный файл
-CONFIG_FILE = "gemini_userbot.json"
+CONFIG_FILE = "config.json"
 
 class GeminiUserbot:
     def __init__(self):
