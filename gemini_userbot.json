@@ -1,0 +1,6 @@
+{
+  "api_id": "ВАШ_API_ID", // Взять из https://my.telegram.org/apps
+  "api_hash": "ВАШ_API_HASH", // Взять из https://my.telegram.org/apps
+  "phone_number": "ВАШ_НОМЕР",  // Например: "+79991234567"
+  "gemini_api_key": "ВАШ_GEMINI_API_KEY" // Взять из https://aistudio.google.com/app/apikey
+}
