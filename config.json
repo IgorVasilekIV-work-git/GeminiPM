@@ -1,6 +1,8 @@
 {
   "api_id": "23852268",
   "api_hash": "ff97c1e9aaf94cc50789bb61d646e777",
-  "phone_number": "ВАШ_НОМЕР",  // Например: "+79991234567"
-  "gemini_api_key": "ВАШ_GEMINI_API_KEY" // Взять из https://aistudio.google.com/app/apikey
+  "phone_number": "ВАШ_НОМЕР",
+  "gemini_api_key": "ВАШ_GEMINI_API_KEY"
+  "user_states": {}
 }
+

@@ -13,7 +13,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Конфигурационный файл
-CONFIG_FILE = "config.json"
+CONFIG_FILE = "gemini_userbot.json"
 
 class GeminiUserbot:
     def __init__(self):
@@ -34,6 +34,8 @@ class GeminiUserbot:
         # Настройка Gemini
         if self.config.get("gemini_api_key"):
             genai.configure(api_key=self.config["gemini_api_key"])
+        else:
+            logger.warning("Gemini API key not configured!")
 
     def load_config(self):
         """Загрузка конфигурации из файла"""
@@ -42,7 +44,6 @@ class GeminiUserbot:
             "api_hash": "",
             "phone_number": "",  # Например: "+79991234567"
             "gemini_api_key": "",
-            "user_states": {}
         }
         
         try:
@@ -50,19 +51,35 @@ class GeminiUserbot:
                 with open(CONFIG_FILE, "r") as f:
                     loaded = json.load(f)
                     config.update(loaded)
+                    
                     # Загрузка состояний пользователей
                     self.user_states = loaded.get("user_states", {})
+            else:
+                logger.info("Config file not found, using default config")
+                
         except Exception as e:
             logger.error(f"Ошибка загрузки конфига: {e}")
+            # Создаем новый конфиг при ошибке
+            with open(CONFIG_FILE, "w") as f:
+                json.dump(config, f, indent=2)
+            logger.info("Создан новый конфигурационный файл")
             
         return config
 
     def save_config(self):
         """Сохранение конфигурации в файл"""
         try:
-            self.config["user_states"] = self.user_states
+            # Сохраняем только необходимые данные
+            save_data = {
+                "api_id": self.config["api_id"],
+                "api_hash": self.config["api_hash"],
+                "phone_number": self.config["phone_number"],
+                "gemini_api_key": self.config["gemini_api_key"],
+                "user_states": self.user_states
+            }
+            
             with open(CONFIG_FILE, "w") as f:
-                json.dump(self.config, f, indent=2)
+                json.dump(save_data, f, indent=2)
         except Exception as e:
             logger.error(f"Ошибка сохранения конфига: {e}")
 
@@ -111,7 +128,15 @@ class GeminiUserbot:
             genai.configure(api_key=new_key)
             await message.reply("🔑 **API ключ успешно обновлен!**")
         
-        @self.app.on_message(filters.private & filters.incoming & filters.text & ~filters.command)
+        # ИСПРАВЛЕННЫЙ ФИЛЬТР
+        @self.app.on_message(
+            filters.private 
+            & filters.incoming 
+            & filters.text 
+            & ~filters.command("start")
+            & ~filters.command("gpt")
+            & ~filters.command("setkey")
+        )
         async def handle_message(client: Client, message: Message):
             user_id = message.from_user.id
             
